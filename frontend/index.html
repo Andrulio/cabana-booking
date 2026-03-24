@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Azure Palms Resort — Cabana Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <div class="resort-name">Azure Palms Resort</div>
+    <div class="resort-tagline">Poolside Cabana Reservations</div>
+</header>
+
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-icon-wrapper">
+            <img src="assets/cabana.png" style="width:20px; height:20px;">
+        </div>
+        <span>Available Cabana</span>
+    </div>
+
+    <div class="legend-item">
+        <div class="legend-icon-wrapper">
+            <img src="assets/cabana.png" style="width:20px; height:20px; filter: grayscale(1) brightness(0.7) sepia(1) hue-rotate(-50deg) saturate(2); opacity: 0.6;">
+        </div>
+        <span>Booked Cabana</span>
+    </div>
+
+    <div class="legend-item">
+        <div class="legend-icon-wrapper" style="background-image: url('assets/textureWater.png'); background-size: cover;">
+        </div>
+        <span>Pool</span>
+    </div>
+
+    <div class="legend-item">
+        <div class="legend-icon-wrapper">
+            <img src="assets/houseChimney.png" style="width:22px; height:22px;">
+        </div>
+        <span>Chalet</span>
+    </div>
+</div>
+<div class="status-bar" id="status-bar">Loading resort map…</div>
+
+<div class="map-container">
+    <div id="resort-map"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+    <div class="modal" id="modal-content">
+        <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
