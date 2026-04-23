@@ -1,7 +1,5 @@
-const express = require('express');
-const cors = require('cors');
-const fs = require('fs');
 const path = require('path');
+const { createApp } = require('./app');
 
 function parseArgs(argv) {
     const args = {};
@@ -11,101 +9,6 @@ function parseArgs(argv) {
         if (argv[i] === '--port' && argv[i + 1]) args.port = parseInt(argv[++i]);
     }
     return args;
-}
-
-function createApp(mapPath, bookingsPath) {
-    const app = express();
-    app.use(cors());
-    app.use(express.json());
-
-    const mapRaw = fs.readFileSync(mapPath, 'utf8');
-    const grid = mapRaw.split('\n').map(row => row.split(''));
-    const cabanas = {};
-    grid.forEach((row, r) => {
-        row.forEach((cell, c) => {
-            if (cell === 'W') {
-                const id = `${r}_${c}`;
-                cabanas[id] = {
-                    id,
-                    row: r,
-                    col: c,
-                    booked: false,
-                    bookedBy: null
-                };
-            }
-        });
-    });
-
-    const guestsRaw = fs.readFileSync(bookingsPath, 'utf8');
-    const guests = {};
-    JSON.parse(guestsRaw).forEach(g => {
-        guests[g.room] = g.guestName;
-    });
-
-    const bookings = {};
-
-    app.get('/api/map', (req, res) => {
-        const cabanasWithState = Object.values(cabanas).map(c => ({
-            ...c,
-            booked: !!bookings[c.id],
-            bookedBy: bookings[c.id] || null,
-        }));
-        res.json({
-            grid,
-            cabanas: cabanasWithState
-        });
-    });
-
-    app.post('/api/book', (req, res) => {
-        const {
-            cabanaId,
-            room,
-            guestName
-        } = req.body;
-
-        if (!cabanaId || !room || !guestName) {
-            return res.status(400).json({
-                error: 'cabanaId, room, and guestName are required.'
-            });
-        }
-
-        if (!cabanas[cabanaId]) {
-            return res.status(404).json({
-                error: 'Cabana not found.'
-            });
-        }
-
-        if (bookings[cabanaId]) {
-            return res.status(409).json({
-                error: 'Cabana is already booked.'
-            });
-        }
-
-        const expectedName = guests[room];
-        if (!expectedName) {
-            return res.status(401).json({
-                error: 'Room number not found.'
-            });
-        }
-        if (expectedName.toLowerCase() !== guestName.trim().toLowerCase()) {
-            return res.status(401).json({
-                error: 'Guest name does not match our records.'
-            });
-        }
-
-        bookings[cabanaId] = {
-            room,
-            guestName: expectedName
-        };
-        res.json({
-            success: true,
-            cabanaId,
-            room,
-            guestName: expectedName
-        });
-    });
-
-    return app;
 }
 
 if (require.main === module) {
@@ -122,6 +25,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = {
-    createApp
-};
+module.exports = { createApp };
